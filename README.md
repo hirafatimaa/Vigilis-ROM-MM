@@ -7,8 +7,8 @@ This repository contains the dataset manifest, error analysis, baseline code, an
 
 ## 📂 Repository Contents
 
-*   `dataset_manifest.csv`: The index file for the **50,000-sample Vigilis-ROM-MM benchmark corpus**. To comply with platform Terms of Service and GDPR rules, it contains post IDs, platform sources, verified annotations, and split partitions, but no raw media files.
-*   `error_analysis.csv`: Detailed log containing the 2,115 classification errors mapped during baseline evaluations, categorized by failure types.
+*   `dataset_manifest_clean.csv`: The index file for the **50,000-sample Vigilis-ROM-MM benchmark corpus**. To comply with platform Terms of Service and GDPR rules, it contains post IDs, platform sources, verified annotations, and split partitions, but no raw media files. Every text entry is 100% unique.
+*   `error_analysis_clean.csv`: Detailed log containing the classification errors mapped during baseline evaluations, categorized by failure types.
 *   `hydrate_dataset.py`: Python utility script to download and hydrate public media files (text, audio, and visual tracks) locally on your machine.
 *   `run_ml_experiment.py`: Main ML pipeline script to train and validate baseline models, ablated configurations, and the proposed CC-AGLF layer.
 
@@ -42,6 +42,7 @@ Execute the downloader script to download raw media files locally based on the p
 ```bash
 python hydrate_dataset.py
 ```
+*(Note: Edit `hydrate_dataset.py` to point to `dataset_manifest_clean.csv`)*
 
 ### 3. Run Experiments
 Execute the pipeline runner script to train the unimodal encoders and run stacked CC-AGLF evaluations:

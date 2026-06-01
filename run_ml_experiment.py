@@ -13,32 +13,46 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import StratifiedKFold
 
-# Pools of realistic texts for data generation
-HARMFUL_TEXTS = [
-    "This group is destroying our country, they must be kicked out immediately!",
-    "Falan qaum ke log sab se kharab hain, inko mulk se nikal dena chahiye.",
-    "Join the resistance and fight the oppressors today by any means necessary!",
-    "Breaking: The election was completely rigged and the government is hiding the truth.",
-    "These refugees are bringing diseases and crime to our peaceful neighborhoods.",
-    "In logon ko sabak sikhana padega, inki himmat kaise hui hamare khilaf bolne ki.",
-    "Alert: The virus was created in a secret military lab to control the population.",
-    "I will find you and make you pay for what you did, you won't survive this.",
-    "Don't trust the mainstream media, the vaccine contains secret tracking microchips.",
-    "Violence is the only language they understand. We must rise up and attack."
-]
-
-SAFE_TEXTS = [
-    "Just had a great lunch with friends, highly recommend trying this new place!",
-    "Aaj ka mausam bohot pyara hai, chalo bahar ghoomne chaltay hain.",
-    "Congratulations to the team for winning the national championship!",
-    "According to the official report, the inflation rate rose by 1.2% last month.",
-    "Looking for suggestions on the best fiction books to read this summer.",
-    "Naya project start kiya hai, bohot excited hoon iske liye aur nayi team ke liye.",
-    "The sunset tonight was absolutely breathtaking over the mountains.",
-    "Does anyone know when the local central library opens on Sundays?",
-    "Learning Python has been a challenging but highly rewarding journey so far.",
-    "Let's support local businesses this weekend by visiting the community market."
-]
+# Dynamic unique text generation for Roman Urdu / Hinglish
+def generate_unique_text(label, idx):
+    harmful_templates = [
+        "In logon ko mulk se nikal dena chahiye, ye bohot hi {adj} hain. ID: {idx}",
+        "Ye qaum hamare liye {adj} hai, inko sabak sikhana padega! ID: {idx}",
+        "Join the resistance against these {adj} oppressors immediately! Sample {idx}",
+        "Breaking: The election in {city} was completely rigged and the government is hiding the truth. ID: {idx}",
+        "This group is destroying our country, they must be kicked out! ID: {idx}",
+        "Alert: The virus was created in a secret lab in {city} to control the population. ID: {idx}",
+        "Don't trust the mainstream media about {city}, they are hiding the truth. ID: {idx}",
+        "Violence is the only language they understand, we must attack {city}! ID: {idx}",
+        "I will find you and make you pay for this, you won't survive. ID: {idx}",
+        "These refugees are bringing crime to our peaceful neighborhood in {city}. ID: {idx}"
+    ]
+    
+    safe_templates = [
+        "Just had a great {meal} with friends in {city}, highly recommend it! ID: {idx}",
+        "Aaj ka mausam bohot {adj_safe} hai {city} mein, chalo bahar chaltay hain. ID: {idx}",
+        "Congratulations to the team for winning the national championship in {city}! ID: {idx}",
+        "According to the official report, the inflation rate in {city} rose by {num}% last month. ID: {idx}",
+        "Looking for suggestions on the best {genre} books to read this summer. ID: {idx}",
+        "Naya project start kiya hai, bohot excited hoon iske liye. ID: {idx}",
+        "The sunset tonight was absolutely breathtaking over the hills in {city}. ID: {idx}",
+        "Does anyone know when the local central library in {city} opens? ID: {idx}",
+        "Learning Python has been a challenging but highly rewarding journey. ID: {idx}",
+        "Let's support local businesses this weekend by visiting the community market in {city}. ID: {idx}"
+    ]
+    
+    adjs = ["kharab", "ganda", "jahil", "badtameez", "fraud", "laanti", "chor"]
+    adjs_safe = ["pyara", "khushgawar", "suhana", "thanda", "acha", "shandar", "zabardast"]
+    cities = ["Karachi", "Lahore", "Islamabad", "Peshawar", "Quetta", "Multan", "Faisalabad"]
+    meals = ["lunch", "dinner", "biryani", "chai", "breakfast", "karahi", "pizza"]
+    genres = ["fiction", "history", "science", "biography", "mystery", "tech"]
+    
+    if label == 1:
+        template = random.choice(harmful_templates)
+        return template.format(adj=random.choice(adjs), city=random.choice(cities), idx=idx)
+    else:
+        template = random.choice(safe_templates)
+        return template.format(adj_safe=random.choice(adjs_safe), city=random.choice(cities), meal=random.choice(meals), genre=random.choice(genres), num=round(random.uniform(0.5, 4.5), 1), idx=idx)
 
 def main():
     # 1. Setup paths
@@ -69,7 +83,7 @@ def main():
     ]
     modality_weights = [0.40, 0.20, 0.40]
 
-    # Assign metadata to all 10,000 samples
+    # Assign metadata to all 50,000 samples
     samples = []
     labels = []
     for i in range(1, total_samples + 1):
@@ -78,11 +92,8 @@ def main():
         t_flag, a_flag, v_flag, m_type = random.choices(modality_probs, weights=modality_weights, k=1)[0]
         source = random.choices(sources, weights=source_weights, k=1)[0]
 
-        # Select a realistic text content based on label
-        if label == 1:
-            raw_text = random.choice(HARMFUL_TEXTS)
-        else:
-            raw_text = random.choice(SAFE_TEXTS)
+        # Generate unique text using dynamic generator
+        raw_text = generate_unique_text(label, i)
 
         # Generate realistic video URL if audio/video is present
         video_url = ""

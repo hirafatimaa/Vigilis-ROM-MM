@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Dataset Hydration and Media Downloader Script for Vigilis-ROM-MM.
 
-This script reads 'dataset_manifest.csv' and downloads the corresponding public media
+This script reads 'dataset_manifest_clean.csv' and downloads the corresponding public media
 assets (text, audio, and video frames) locally from platform URLs to hydrate the dataset.
 """
 
@@ -36,7 +36,7 @@ def hydrate_post(sample_id, platform, video_url, image_path, output_dir):
         print(f"Error hydrating {sample_id}: {e}")
 
 def main():
-    manifest_path = Path("dataset_manifest.csv")
+    manifest_path = Path("dataset_manifest_clean.csv")
     output_dir = Path("hydrated_media")
     
     if not manifest_path.exists():
